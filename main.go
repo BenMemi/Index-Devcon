@@ -42,15 +42,15 @@ func main() {
 		fmt.Println("error loading .env file")
 	}
 
-	//YOUR DATABASE CONNECTION STRING 
+	//YOUR DATABASE CONNECTION STRING
 	dsn := dotenv.GetString("DATABASE_URL")
-	//YOU RPC ENDPOINT HERE 
+	//YOU RPC ENDPOINT HERE
 	rpc := dotenv.GetString("RPC_URL")
 	//IF YOU WANT TO RUN A HISTORIC QUERY
 	historic := dotenv.GetBool("HISTORIC")
-	//FOR HISTORIC QUEIRES OR IF YOU WANT TO RANGE YOUR SUBSCRIPTION 
+	//FOR HISTORIC QUEIRES OR IF YOU WANT TO RANGE YOUR SUBSCRIPTION
 	fromBlock := big.NewInt(int64(dotenv.GetInt("FROM_BLOCK")))
-	//FOR HISTORIC QUEIRES OR IF YOU WANT TO RANGE YOUR SUBSCRIPTION 
+	//FOR HISTORIC QUEIRES OR IF YOU WANT TO RANGE YOUR SUBSCRIPTION
 	toBlock := big.NewInt(int64(dotenv.GetInt("TO_BLOCK")))
 	//IF YOU WANT TO USE A SEPERATE RPC FOR THW HISTORIC QUERY (DUE TO LOAD)
 	rpcHistoric := dotenv.GetString("RPC_HISTORIC")
@@ -65,7 +65,7 @@ func main() {
 		fmt.Println("Connected to database")
 		fmt.Println(db)
 	}
-	//MIGRATE OUR TABLES ACROSS SO WE DONT HAVE TO MANAGE THE DB SEPOERATELY 
+	//MIGRATE OUR TABLES ACROSS SO WE DONT HAVE TO MANAGE THE DB SEPOERATELY
 	//DEFINE YOUR DB TYPES IN THE database folder/module
 	db.AutoMigrate(&database.User{})
 	db.AutoMigrate(&database.FollowMessage{})
@@ -73,7 +73,7 @@ func main() {
 
 	//CONNECT TO THE RPC
 	client, err := ethclient.Dial(rpc)
-	//MAKE SURE WE ARE CONNECTED 
+	//MAKE SURE WE ARE CONNECTED
 	//IF YOU WANT TO EXPAND THIS MAYBE TRY A RETRY PATTERN!
 	if err != nil {
 		log.Fatal("Failed to connect to the websocket of the Node (RPC) ", err)
@@ -81,20 +81,20 @@ func main() {
 		fmt.Println("successfully connected to the RPC endpoint!")
 	}
 
-	//INITIAILISE OUR ABI FROM OUR ABI STRING 
+	//INITIAILISE OUR ABI FROM OUR ABI STRING
 	contractABI, err := abi.JSON(strings.NewReader(ABI))
 	if err != nil {
 		log.Fatal("could not convert JSON ABI string to ABI object")
 	}
 
-	//INSERT YOUR TARGET ADDRESS AND TOPIC TARGETS HERE 
+	//INSERT YOUR TARGET ADDRESS AND TOPIC TARGETS HERE
 	contractAddress := common.HexToAddress("")
 	query := ethereum.FilterQuery{
 		Addresses: []common.Address{contractAddress},
 		Topics:    [][]common.Hash{{common.HexToHash("")}},
 	}
-	//MIGHT BE A GOOD IDEA TO INITIALIZE ANOTHER CLIENT OR BOOT ANOTHER IMAGE HERE IF YOU 
-	//WANT TO DO MULTIPLE QUERIES 
+	//MIGHT BE A GOOD IDEA TO INITIALIZE ANOTHER CLIENT OR BOOT ANOTHER IMAGE HERE IF YOU
+	//WANT TO DO MULTIPLE QUERIES
 	query2 := ethereum.FilterQuery{
 		Addresses: []common.Address{contractAddress},
 		Topics:    [][]common.Hash{{common.HexToHash("")}},
@@ -104,7 +104,7 @@ func main() {
 	logs1 := make(chan types.Log)
 	logs2 := make(chan types.Log)
 
-	//HISTORIC QUERY EXAMPLE 
+	//HISTORIC QUERY EXAMPLE
 	if historic {
 		historicQuery := ethereum.FilterQuery{
 			FromBlock: fromBlock,
@@ -156,19 +156,19 @@ func main() {
 			fmt.Println("The Topic 0 of this event is;: ", vLog.Topics[0].Hex())
 			Topics := vLog.Topics
 			//WE DECODE THIS TOPIC WITH HEXTIL TO GET THE STRING VALUE OF THE TOPIC
-			log-data, err := hexutil.Decode(Topics[1].Hex())
+			log_data, err := hexutil.Decode(Topics[1].Hex())
 			if err != nil {
 				log.Fatal(err)
 			}
 			//WE USE THE ABI TO DECODE OUT EVENT/LOG DATA AND TOPIC!
-			ProfileIdInterface, err := contractABI.Unpack("YOUR_FUNCTION_NAME_HERE", log-data)
+			ProfileIdInterface, err := contractABI.Unpack("YOUR_FUNCTION_NAME_HERE", log_data)
 
 			if err != nil {
 				log.Fatal(err)
 			}
 
 			//NOW WE ASSERT THE INTERFACE TO THE TYPE WE EXPECT
-			//DON"T WORRY IF YOU GET IT WRONG, GO WILL TELL YOU IN THE LOGS AND YOU CAN CORRECT IT! 
+			//DON"T WORRY IF YOU GET IT WRONG, GO WILL TELL YOU IN THE LOGS AND YOU CAN CORRECT IT!
 			//YOURS WILL BE DIFFFERENT, EDIT THESE!!!
 			ProfileIDBI := ProfileIdInterface[0].(*big.Int)
 			profileID := decimal.NewFromBigInt(ProfileIDBI, 0)
@@ -197,7 +197,6 @@ func main() {
 				UpdateAll: true,
 			}).Create(&myvar)
 
-
 			fmt.Println(common.HexToAddress((Topics[2].Hex())).Hex())
 		case err := <-sub2.Err():
 			log.Fatal(err)
@@ -213,11 +212,11 @@ func main() {
 				log.Fatal(err)
 			}
 
-			log-data, err := hexutil.Decode(vLog2.Topics[1].Hex())
+			log_data, err := hexutil.Decode(vLog2.Topics[1].Hex())
 			if err != nil {
 				log.Fatal(err)
 			}
-			profileIdInterface, err := contractABI.Unpack("bigint", log-data)
+			profileIdInterface, err := contractABI.Unpack("bigint", log_data)
 			if err != nil {
 				log.Fatal(err)
 			}

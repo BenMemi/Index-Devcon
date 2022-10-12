@@ -13,4 +13,10 @@ FROM_BLOCK=1
 TO_BLOCK=5
 RPC_HISTORIC=https://polygon-mumbai.gateway.pokt.network/v1/lb/no-touchy
 
+
+There is also a dockerfile if you want to deploy your indexer/run it in a compose 
+
+You can just make production PROJECT_ID=YOUR_GCP_PROJECT_ID and it will push up your container to the registry for you! 
+
+Also you can make test to test the container locally before pushing it up to the registry!
       

@@ -37,7 +37,7 @@ production:
 	echo "Set PROJECT_ID=YOUR_PROJECT_ID if you have not !!!"
 	# Build for production for arm64 to make it work on GKE
 	docker buildx build --platform linux/amd64 -t gcr.io/$(PROJECT_ID)/lens-tracker . 
-	docker push gcr.io/$(PROJECT_ID)/lens-tracker
+	docker push gcr.io/$(PROJECT_ID)/my-indexer
 	
 	
 
